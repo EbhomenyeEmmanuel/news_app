@@ -1,8 +1,8 @@
-# news_app
+# Description
 
 A news app built with Flutter project.
 
-##My First Flutter Project.
+- My First Flutter Project.
 
 ## UI design
 A few resources to get you started if this is your first Flutter project:
