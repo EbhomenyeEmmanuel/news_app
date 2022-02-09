@@ -1,5 +1,8 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:news_app/components/news_icon.dart';
 import 'package:news_app/models/stories.dart';
 
 class BreakingNewsListView extends StatelessWidget {
@@ -11,47 +14,64 @@ class BreakingNewsListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Size screenSize = MediaQuery.of(context).size;
+
     return GestureDetector(
       onTap: () {
         Navigator.push(context, MaterialPageRoute(builder: (context) {
           return Text('');
         }));
       },
-      child: Padding(
-          padding: EdgeInsets.zero,
+      child: Container(
+          height: screenSize.height * 0.4,
+          width: screenSize.height * 0.5,
+          padding: EdgeInsets.only(left: 16, right: 5),
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             itemBuilder: (context, index) {
-              return buildCard(_story[index]);
-            },
-            separatorBuilder: (context, index) {
-              return const SizedBox(width: 16);
+              return buildCard(_story[index], context);
             },
             itemCount: _story.length,
+            separatorBuilder: (BuildContext context, int index) {
+              return SizedBox(width: 8);
+            },
           )),
     );
   }
 }
 
-Widget buildCard(Story story) {
+Widget buildCard(Story story, BuildContext context) {
   return Column(
+    mainAxisSize: MainAxisSize.max,
+    crossAxisAlignment: CrossAxisAlignment.start,
     mainAxisAlignment: MainAxisAlignment.start,
     children: [
+      //NewsIcon(imageUrl: story.imageUrl),
       Expanded(
         child: ClipRRect(
           child: Image.asset(
             'assets/news_app_assets/card_smoothie.png',
-            fit: BoxFit.cover,
+            fit: BoxFit.fill,
+            width: 250,
           ),
           borderRadius: BorderRadius.circular(12),
         ),
       ),
-      SizedBox(height: 10),
-      Text("Candidate Biden called Saudi Arabia a Pariah"),
-      SizedBox(height: 10),
-      Text("4 hours ago"),
-      SizedBox(height: 10),
-      Text("By David E. Sanger")
+      SizedBox(height: 8),
+      Wrap(
+        direction: Axis.vertical,
+        runAlignment: WrapAlignment.start,
+        children: [
+          Text(
+            '${story.title}',
+            style: Theme.of(context).textTheme.headline6,
+            maxLines: 3,
+          ),
+          Text("4 hours ago", style: Theme.of(context).textTheme.bodyText2),
+          Text("By David E. Sanger",
+              style: Theme.of(context).textTheme.bodyText2),
+        ],
+      )
     ],
   );
 }

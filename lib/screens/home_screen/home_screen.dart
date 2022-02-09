@@ -1,4 +1,5 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:news_app/api/mock_news_service.dart';
 import 'package:news_app/models/news_data.dart';
@@ -12,82 +13,105 @@ class HomeScreen extends StatelessWidget {
 
     Size screenSize = MediaQuery.of(context).size;
     return ListView(
+      primary: true,
+      shrinkWrap: true,
       scrollDirection: Axis.vertical,
       children: [
-        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Container(
-            constraints: BoxConstraints.expand(
-                width: screenSize.width, height: screenSize.height * 0.4),
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                  fit: BoxFit.fill,
-                  image:
-                      AssetImage('assets/news_app_assets/card_smoothie.png')),
-              borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(36.0),
-                  bottomRight: Radius.circular(36.0)),
-            ),
-            child: Stack(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.3),
-                    borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(36.0),
-                        bottomRight: Radius.circular(36.0)),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    left: 8.0,
-                  ),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        IconButton(
-                          icon: Icon(Icons.add),
-                          onPressed: () {},
-                        ),
-                        Text(
-                          "News of the day",
-                          textAlign: TextAlign.end,
-                        ),
-                        SizedBox(height: 16),
-                        Text("News of the day"),
-                      ]),
-                )
-              ],
-            ),
-          ),
-        ]),
-        Padding(
-          padding: EdgeInsets.all(16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        Column(
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Breaking News",
-                  style: Theme.of(context).textTheme.headline2),
-              Text(
-                "More", style: Theme.of(context).textTheme.headline3,
-                //TODO("Add onPressed to take you to gridView")
+              Container(
+                constraints: BoxConstraints.expand(
+                    width: screenSize.width, height: screenSize.height * 0.4),
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                      fit: BoxFit.fill,
+                      image: AssetImage(
+                          'assets/news_app_assets/card_smoothie.png')),
+                  borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(36.0),
+                      bottomRight: Radius.circular(36.0)),
+                ),
+                child: Stack(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.15),
+                        borderRadius: const BorderRadius.only(
+                            bottomLeft: Radius.circular(36.0),
+                            bottomRight: Radius.circular(36.0)),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                      ),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            IconButton(
+                              alignment: Alignment.centerLeft,
+                              padding: EdgeInsets.zero,
+                              icon: Icon(Icons.view_headline),
+                              onPressed: () {},
+                            ),
+                            SizedBox(height: 16),
+                            Container(
+                                padding: EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  borderRadius: BorderRadius.circular(16),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      blurRadius: 40,
+                                      color: Colors.grey.withOpacity(0.5),
+                                    )
+                                  ],
+                                ),
+                                child: Text(
+                                  "News of the day",
+                                )),
+                            SizedBox(height: 16),
+                            Text(
+                              "News of the day",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ]),
+                    )
+                  ],
+                ),
               ),
-            ],
-          ),
-        ),
-        SizedBox(height: 8),
-        FutureBuilder(
-            future: mockService.getNewsData(),
-            builder: (context, AsyncSnapshot<NewsData> snapshot) {
-              if (snapshot.connectionState == ConnectionState.done &&
-                  snapshot.data != null) {
-                return BreakingNewsListView(
-                    story: snapshot.data?.todayStories.sublist(0, 4) ?? []);
-              } else {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-            }),
+              Padding(
+                padding: EdgeInsets.all(16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Breaking News",
+                        style: Theme.of(context).textTheme.headline2),
+                    Text(
+                      "More", style: Theme.of(context).textTheme.headline3,
+                      //TODO("Add onPressed to take you to gridView")
+                    ),
+                  ],
+                ),
+              ),
+              FutureBuilder(
+                  future: mockService.getNewsData(),
+                  builder: (context, AsyncSnapshot<NewsData> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      return BreakingNewsListView(
+                          story:
+                              snapshot.data?.todayStories.sublist(0, 4) ?? []);
+                    } else {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                  }),
+            ]),
       ],
     );
   }
