@@ -9,8 +9,8 @@ class Story {
   final String language;
   final String publishedAt;
   final String source;
-  final List<String> categories;
-  final String relevanceScore;
+  final dynamic categories;
+  final dynamic relevanceScore;
   final String locale;
 
   Story(
@@ -34,14 +34,14 @@ class Story {
         title: json['title'] as String,
         description: json['description'] as String,
         keywords: json['keywords'] as String,
-        snippets: json['snippets'] as String,
+        snippets: json['snippet'] as String,
         url: json['url'] as String,
-        imageUrl: json['imageUrl'] as String,
+        imageUrl: json['image_url'] as String,
         language: json['language'] as String,
-        publishedAt: json['publishedAt'] as String,
+        publishedAt: json['published_at'] as String,
         source: json['source'] as String,
-        categories: json['categories'] as List<String>,
-        relevanceScore: json['relevanceScore'] as String,
+        categories: json['categories'] ,
+        relevanceScore: json['relevance_score'],
         locale: json['locale'] as String);
   }
 }
