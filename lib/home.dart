@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:news_app/screens/home_screen/home_screen.dart';
+import 'package:news_app/screens/search_screen/search_screen.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
@@ -14,9 +15,7 @@ class _HomeState extends State<HomePage> {
 
   static List<Widget> pages = <Widget>[
     HomeScreen(),
-    Container(
-      color: Colors.green,
-    ),
+    SearchScreen(),
     Container(
       color: Colors.blue,
     ),
