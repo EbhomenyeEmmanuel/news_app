@@ -9,7 +9,7 @@ class MockBreakingNewsService {
     return NewsData(todayNews);
   }
 
-  // Get sample explore recipes json to display in ui
+  // Get sample explore news json to display in ui
   Future<List<Story>> _getNews() async {
     // Simulate api request wait time
     await Future.delayed(const Duration(milliseconds: 300));
