@@ -14,25 +14,20 @@ class _SearchScreenState extends State<SearchScreen> {
     int _currentCategoryStateIndex = 0;
     final primaryColor = Theme.of(context).primaryColor;
 
-    return Flex(
-      direction: Axis.vertical,
-      children: [
-        Expanded(
-          child: NestedScrollView(
-            headerSliverBuilder:
-                (BuildContext context, bool innerBoxIsScrolled) {
-              return [buildSearchHeader(primaryColor)];
-            },
-            body: buildTabsFromTabView(context),
-          ),
-        )
-      ],
+    return Scaffold(
+      body: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            buildSearchHeader(primaryColor),
+            Expanded(child: buildTabsFromTabView(context)),
+          ]),
     );
   }
 
   Widget buildSearchHeader(Color primaryColor) {
     return Padding(
-      padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+      padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
       child: Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -40,7 +35,7 @@ class _SearchScreenState extends State<SearchScreen> {
         children: [
           IconButton(
             alignment: Alignment.centerLeft,
-            padding: EdgeInsets.zero,
+            padding: EdgeInsets.only(top: 16.0),
             icon: Icon(Icons.view_headline),
             onPressed: () {},
           ),
@@ -78,7 +73,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   ),
                   enabledBorder: InputBorder.none,
                   focusedBorder: InputBorder.none,
-                  suffixIcon: Icon(Icons.search)),
+                  suffixIcon: Icon(Icons.search), fillColor:  Color(0xffF6F6F6)),
             ),
           ),
         ],
@@ -86,63 +81,61 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  Widget buildPageViewDivider(BuildContext context) {
-    return Expanded(
-        child: Divider(
-      color: Colors.grey,
-      height: 2.5,
-    ));
-  }
-
   Widget buildTabsFromTabView(BuildContext context) {
     return DefaultTabController(
         //length: NewsCategories.values.length,
         length: NewsCategories.values.length,
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                child: TabBar(
-                    isScrollable: true,
-                    labelPadding: EdgeInsets.symmetric(horizontal: 8),
-                    indicatorColor: Colors.black,
-                    labelColor: Colors.black,
-                    unselectedLabelColor: Colors.grey,
-                    tabs: [
-                      Tab(
-                        child: Text("General",
-                            style: Theme.of(context).textTheme.headline3),
-                      ),
-                      Tab(
-                        child: Text("Entertainment",
-                            style: Theme.of(context).textTheme.headline3),
-                      ),
-                      Tab(
-                        child: Text("Politics",
-                            style: Theme.of(context).textTheme.headline3),
-                      ),
-                      Tab(
-                        child: Text("Science",
-                            style: Theme.of(context).textTheme.headline3),
-                      ),
-                      Tab(
-                        child: Text("Tech",
-                            style: Theme.of(context).textTheme.headline3),
-                      ),
-                    ]),
-              ),
-              SizedBox(height: 8),
-              TabBarView(children: [
+        child: Padding(
+          padding: const EdgeInsets.only(left: 16.0, right: 16.0,),
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
                 Container(
-                  color: Colors.blue,
-                  child: Text("First"),
+                  child: TabBar(
+                      isScrollable: true,
+                      labelPadding: EdgeInsets.symmetric(horizontal: 8),
+                      indicatorColor: Colors.black,
+                      labelColor: Colors.black,
+                      unselectedLabelColor: Colors.grey,
+                      tabs: [
+                        Tab(
+                          child: Text("General",
+                              style: Theme.of(context).textTheme.headline3),
+                        ),
+                        Tab(
+                          child: Text("Entertainment",
+                              style: Theme.of(context).textTheme.headline3),
+                        ),
+                        Tab(
+                          child: Text("Politics",
+                              style: Theme.of(context).textTheme.headline3),
+                        ),
+                        Tab(
+                          child: Text("Science",
+                              style: Theme.of(context).textTheme.headline3),
+                        ),
+                        Tab(
+                          child: Text("Tech",
+                              style: Theme.of(context).textTheme.headline3),
+                        ),
+                      ]),
                 ),
-                Container(child: Text("Second")),
-                Container(child: Text("Third")),
-                Container(child: Text("Fourth")),
-                Container(child: Text("Fifth")),
+                SizedBox(height: 8),
+                Expanded(
+                  child: TabBarView(children: [
+                    Container(
+                      color: Colors.blue,
+                      child: Text("First"),
+                    ),
+                    Container(color: Colors.red,
+                        child: Text("Second")),
+                    Container(child: Text("Third")),
+                    Container(child: Text("Fourth")),
+                    Container(child: Text("Fifth")),
+                  ]),
+                ),
               ]),
-            ]));
+        ));
   }
 }
