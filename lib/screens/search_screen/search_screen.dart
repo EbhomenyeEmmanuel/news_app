@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:news_app/api/mock_news_service.dart';
 import 'package:news_app/models/news_categories.dart';
+import 'package:news_app/models/news_data.dart';
+import 'package:news_app/models/stories.dart';
 
 class SearchScreen extends StatefulWidget {
   @override
@@ -8,6 +11,7 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
+  final mockService = MockBreakingNewsService();
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
@@ -46,7 +50,7 @@ class _SearchScreenState extends State<SearchScreen> {
               style: Theme.of(context).textTheme.bodyText1),
           SizedBox(height: 16),
           buildSearchEditText(primaryColor),
-          SizedBox(height: 16),
+          SizedBox(height: 8),
         ],
       ),
     );
@@ -73,7 +77,8 @@ class _SearchScreenState extends State<SearchScreen> {
                   ),
                   enabledBorder: InputBorder.none,
                   focusedBorder: InputBorder.none,
-                  suffixIcon: Icon(Icons.search), fillColor:  Color(0xffF6F6F6)),
+                  suffixIcon: Icon(Icons.search),
+                  fillColor: Color(0xffF6F6F6)),
             ),
           ),
         ],
@@ -83,7 +88,6 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Widget buildTabsFromTabView(BuildContext context) {
     return DefaultTabController(
-        //length: NewsCategories.values.length,
         length: NewsCategories.values.length,
         child: Padding(
           padding: const EdgeInsets.only(left: 16.0, right: 16.0,),
@@ -99,43 +103,126 @@ class _SearchScreenState extends State<SearchScreen> {
                       labelColor: Colors.black,
                       unselectedLabelColor: Colors.grey,
                       tabs: [
-                        Tab(
-                          child: Text("General",
-                              style: Theme.of(context).textTheme.headline3),
-                        ),
-                        Tab(
-                          child: Text("Entertainment",
-                              style: Theme.of(context).textTheme.headline3),
-                        ),
-                        Tab(
-                          child: Text("Politics",
-                              style: Theme.of(context).textTheme.headline3),
-                        ),
-                        Tab(
-                          child: Text("Science",
-                              style: Theme.of(context).textTheme.headline3),
-                        ),
-                        Tab(
-                          child: Text("Tech",
-                              style: Theme.of(context).textTheme.headline3),
-                        ),
+                        for (var tabName in getTabNames())
+                          buildTabForTabBar(tabName)
                       ]),
                 ),
-                SizedBox(height: 8),
-                Expanded(
-                  child: TabBarView(children: [
-                    Container(
-                      color: Colors.blue,
-                      child: Text("First"),
-                    ),
-                    Container(color: Colors.red,
-                        child: Text("Second")),
-                    Container(child: Text("Third")),
-                    Container(child: Text("Fourth")),
-                    Container(child: Text("Fifth")),
-                  ]),
-                ),
+                 Expanded(
+                   child: TabBarView(children: [
+                      for (var i in getTabNames()) buildTabViewList(i)
+                    ]),
+                 ),
               ]),
         ));
+  }
+
+  ListView buildList(List<Story> story) {
+    return ListView.separated(
+      scrollDirection: Axis.vertical,
+      itemBuilder: (context, index) {
+        return buildCard(story[index], context);
+      },
+      itemCount: story.length,
+      separatorBuilder: (BuildContext context, int index) {
+        return SizedBox(height: 8);
+      },
+    );
+  }
+
+  getNewsByCategory(List<Story> list, String category) {
+    //TODO("Filter list by category")
+    return list;
+  }
+
+  Widget buildTabViewList(String category) {
+    return FutureBuilder(
+        future: mockService.getNewsData(),
+        builder: (context, AsyncSnapshot<NewsData> snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            var listOfNewsByCategory = getNewsByCategory(
+                snapshot.data?.todayStories.sublist(0, 5) ?? [], category);
+            return buildList(listOfNewsByCategory);
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        });
+  }
+
+  Widget buildTabForTabBar(String tabTitle) {
+    return Tab(
+      child: Text(tabTitle, style: Theme.of(context).textTheme.headline2),
+    );
+  }
+
+  Widget buildCard(Story story, BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        //NewsIcon(imageUrl: story.imageUrl),
+        Expanded(
+          flex: 1,
+          child: ClipRRect(
+            child: Image.asset(
+              'assets/news_app_assets/card_smoothie.png',
+              fit: BoxFit.fill,
+              width: 100,
+              height: 70,
+            ),
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        Expanded(
+          flex: 2,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  story.title,
+                  style: Theme.of(context).textTheme.bodyText1,
+                  textAlign: TextAlign.left,
+                ),
+                SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.access_time),
+                        SizedBox(width: 4),
+                        Text("4 hours ago",
+                            style: Theme.of(context).textTheme.bodyText2)
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Icon(Icons.remove_red_eye),
+                        SizedBox(width: 4),
+                        Text("376 views",
+                            style: Theme.of(context).textTheme.bodyText2)
+                      ],
+                    )
+                  ],
+                )
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  List getTabNames() {
+    var listOfTabNames = <String>[];
+    for (NewsCategories newsCategory in NewsCategories.values) {
+      var enumValue = newsCategory.toString().split('.').last;
+      var capitalizedNewsCategory =
+          enumValue[0].toUpperCase() + enumValue.substring(1);
+      listOfTabNames.add(capitalizedNewsCategory);
+    }
+    return listOfTabNames;
   }
 }
