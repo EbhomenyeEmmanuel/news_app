@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:news_app/api/mock_news_service.dart';
 import 'package:news_app/models/news_data.dart';
@@ -26,7 +27,7 @@ class HomeScreen extends StatelessWidget {
                     width: screenSize.width, height: screenSize.height * 0.4),
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                      fit: BoxFit.fill,
+                      fit: BoxFit.cover,
                       image: AssetImage(
                           'assets/news_app_assets/card_smoothie.png')),
                   borderRadius: BorderRadius.only(
@@ -35,52 +36,55 @@ class HomeScreen extends StatelessWidget {
                 ),
                 child: Stack(
                   children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.15),
-                        borderRadius: const BorderRadius.only(
-                            bottomLeft: Radius.circular(36.0),
-                            bottomRight: Radius.circular(36.0)),
+                    buildTintForBackgroundImage(),
+                    Positioned(
+                      left: 16,
+                      child: IconButton(
+                        alignment: Alignment.centerLeft,
+                        padding: EdgeInsets.zero,
+                        color: Colors.white,
+                        icon: Icon(Icons.view_headline),
+                        onPressed: () {},
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(
+                    Positioned(
                         left: 16,
-                      ),
-                      child: Column(
+                        right: 10,
+                        bottom: 30,
+                        child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            IconButton(
-                              alignment: Alignment.centerLeft,
-                              padding: EdgeInsets.zero,
-                              icon: Icon(Icons.view_headline),
-                              onPressed: () {},
-                            ),
-                            SizedBox(height: 16),
-                            Container(
-                                padding: EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: Colors.grey.withOpacity(0.5),
-                                  borderRadius: BorderRadius.circular(16),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      blurRadius: 40,
-                                      color: Colors.grey.withOpacity(0.5),
-                                    )
-                                  ],
-                                ),
-                                child: Text(
-                                  "News of the day",
-                                )),
+                            buildBlurNewsCategoryChip(),
                             SizedBox(height: 16),
                             Text(
-                              "News of the day",
+                              "'V.I.P.Immunization' for the Powerful and Their Cronies Rattles South America ",
                               style: TextStyle(
                                   color: Colors.white,
-                                  fontWeight: FontWeight.bold),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 24),
+                              textAlign: TextAlign.start,
                             ),
-                          ]),
-                    )
+                            SizedBox(height: 16),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Learn More",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14),
+                                  textAlign: TextAlign.start,
+                                ),
+                                SizedBox(width: 5),
+                                Icon(
+                                  Icons.arrow_forward,
+                                  color: Colors.white,
+                                ),
+                              ],
+                            )
+                          ],
+                        ))
                   ],
                 ),
               ),
@@ -114,5 +118,29 @@ class HomeScreen extends StatelessWidget {
             ]),
       ],
     );
+  }
+
+  Container buildTintForBackgroundImage() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.black.withOpacity(0.15),
+        borderRadius: const BorderRadius.only(
+            bottomLeft: Radius.circular(36.0),
+            bottomRight: Radius.circular(36.0)),
+      ),
+    );
+  }
+
+  Container buildBlurNewsCategoryChip() {
+    return Container(
+        padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+        decoration: BoxDecoration(
+          color: Colors.black.withOpacity(0.2),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Text(
+          "News of the day",
+          style: TextStyle(color: Colors.white),
+        ));
   }
 }

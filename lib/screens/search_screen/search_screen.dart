@@ -4,6 +4,7 @@ import 'package:news_app/api/mock_news_service.dart';
 import 'package:news_app/models/news_categories.dart';
 import 'package:news_app/models/news_data.dart';
 import 'package:news_app/models/stories.dart';
+import 'package:news_app/screens/search_screen/search_item_screen.dart';
 
 class SearchScreen extends StatefulWidget {
   @override
@@ -12,6 +13,7 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   final mockService = MockBreakingNewsService();
+
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
@@ -31,7 +33,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Widget buildSearchHeader(Color primaryColor) {
     return Padding(
-      padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
+      padding: const EdgeInsets.only(left: 16.0, top: 16.0, right: 16.0),
       child: Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -107,11 +109,11 @@ class _SearchScreenState extends State<SearchScreen> {
                           buildTabForTabBar(tabName)
                       ]),
                 ),
-                 Expanded(
-                   child: TabBarView(children: [
-                      for (var i in getTabNames()) buildTabViewList(i)
-                    ]),
-                 ),
+                Expanded(
+                  child: TabBarView(children: [
+                    for (var i in getTabNames()) buildTabViewList(i)
+                  ]),
+                ),
               ]),
         ));
   }
@@ -139,8 +141,8 @@ class _SearchScreenState extends State<SearchScreen> {
         future: mockService.getNewsData(),
         builder: (context, AsyncSnapshot<NewsData> snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            var listOfNewsByCategory = getNewsByCategory(
-                snapshot.data?.todayStories.sublist(0, 5) ?? [], category);
+            var listOfNewsByCategory =
+                getNewsByCategory(snapshot.data?.todayStories ?? [], category);
             return buildList(listOfNewsByCategory);
           } else {
             return const Center(
@@ -157,62 +159,68 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Widget buildCard(Story story, BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        //NewsIcon(imageUrl: story.imageUrl),
-        Expanded(
-          flex: 1,
-          child: ClipRRect(
-            child: Image.asset(
-              'assets/news_app_assets/card_smoothie.png',
-              fit: BoxFit.fill,
-              width: 100,
-              height: 70,
-            ),
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-        Expanded(
-          flex: 2,
-          child: Padding(
-            padding: const EdgeInsets.only(left: 8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  story.title,
-                  style: Theme.of(context).textTheme.bodyText1,
-                  textAlign: TextAlign.left,
+    return InkWell(
+        onTap: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return SearchItemScreen(news: story);
+          }));
+        },
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            //NewsIcon(imageUrl: story.imageUrl),
+            Expanded(
+              flex: 1,
+              child: ClipRRect(
+                child: Image.asset(
+                  'assets/news_app_assets/card_smoothie.png',
+                  fit: BoxFit.fill,
+                  width: 100,
+                  height: 70,
                 ),
-                SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            Expanded(
+              flex: 2,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        Icon(Icons.access_time),
-                        SizedBox(width: 4),
-                        Text("4 hours ago",
-                            style: Theme.of(context).textTheme.bodyText2)
-                      ],
+                    Text(
+                      story.title,
+                      style: Theme.of(context).textTheme.bodyText1,
+                      textAlign: TextAlign.left,
                     ),
+                    SizedBox(height: 8),
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Icon(Icons.remove_red_eye),
-                        SizedBox(width: 4),
-                        Text("376 views",
-                            style: Theme.of(context).textTheme.bodyText2)
+                        Row(
+                          children: [
+                            Icon(Icons.access_time),
+                            SizedBox(width: 4),
+                            Text("4 hours ago",
+                                style: Theme.of(context).textTheme.bodyText2)
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Icon(Icons.remove_red_eye),
+                            SizedBox(width: 4),
+                            Text("376 views",
+                                style: Theme.of(context).textTheme.bodyText2)
+                          ],
+                        )
                       ],
                     )
                   ],
-                )
-              ],
+                ),
+              ),
             ),
-          ),
-        ),
-      ],
-    );
+          ],
+        ));
   }
 
   List getTabNames() {
