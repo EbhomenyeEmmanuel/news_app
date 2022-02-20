@@ -4,6 +4,7 @@ import 'package:news_app/api/mock_news_service.dart';
 import 'package:news_app/models/news_categories.dart';
 import 'package:news_app/models/news_data.dart';
 import 'package:news_app/models/stories.dart';
+import 'package:news_app/screens/search_screen/empty_search_screen.dart';
 import 'package:news_app/screens/search_screen/search_item_screen.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -141,9 +142,14 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  getNewsByCategory(List<Story> list, String category) {
-    //TODO("Filter list by category")
-    return list;
+  List<Story> getNewsByCategory(List<Story> list, String category) {
+    var filteredList = <Story>[];
+    for (Story story in list) {
+      if (story.categories.toString().contains(category.toLowerCase())) {
+        filteredList.add(story);
+      }
+    }
+    return filteredList;
   }
 
   Widget buildTabViewList(String category) {
@@ -153,7 +159,11 @@ class _SearchScreenState extends State<SearchScreen> {
           if (snapshot.connectionState == ConnectionState.done) {
             var listOfNewsByCategory =
                 getNewsByCategory(snapshot.data?.todayStories ?? [], category);
-            return buildList(listOfNewsByCategory);
+            if (listOfNewsByCategory.isEmpty) {
+              return EmptySearchScreen(category: category);
+            } else {
+              return buildList(listOfNewsByCategory);
+            }
           } else {
             return const Center(
               child: CircularProgressIndicator(),
