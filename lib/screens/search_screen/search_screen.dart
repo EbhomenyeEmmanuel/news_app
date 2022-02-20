@@ -49,7 +49,10 @@ class _SearchScreenState extends State<SearchScreen> {
           Text("Discover", style: Theme.of(context).textTheme.headline1),
           SizedBox(height: 8),
           Text("News from all over the world ",
-              style: Theme.of(context).textTheme.bodyText1),
+              style: TextStyle(
+                  color: Colors.grey,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14)),
           SizedBox(height: 16),
           buildSearchEditText(primaryColor),
           SizedBox(height: 8),
@@ -63,7 +66,7 @@ class _SearchScreenState extends State<SearchScreen> {
       height: 54,
       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
       decoration: BoxDecoration(
-        color: Colors.grey,
+        color: Colors.transparent.withOpacity(0.2),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -72,15 +75,19 @@ class _SearchScreenState extends State<SearchScreen> {
           SizedBox(width: 4),
           Flexible(
             child: TextField(
+              cursorColor: primaryColor.withOpacity(0.5),
               decoration: InputDecoration(
-                  hintText: 'Search',
-                  hintStyle: TextStyle(
-                    color: primaryColor.withOpacity(0.5),
-                  ),
-                  enabledBorder: InputBorder.none,
-                  focusedBorder: InputBorder.none,
-                  suffixIcon: Icon(Icons.search),
-                  fillColor: Color(0xffF6F6F6)),
+                hintText: 'Search',
+                hintStyle: TextStyle(
+                  color: primaryColor.withOpacity(0.5),
+                ),
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                suffixIcon: Icon(
+                  Icons.search,
+                  color: primaryColor.withOpacity(0.5),
+                ),
+              ),
             ),
           ),
         ],
@@ -92,7 +99,10 @@ class _SearchScreenState extends State<SearchScreen> {
     return DefaultTabController(
         length: NewsCategories.values.length,
         child: Padding(
-          padding: const EdgeInsets.only(left: 16.0, right: 16.0,),
+          padding: const EdgeInsets.only(
+            left: 16.0,
+            right: 16.0,
+          ),
           child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
@@ -165,61 +175,73 @@ class _SearchScreenState extends State<SearchScreen> {
             return SearchItemScreen(news: story);
           }));
         },
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            //NewsIcon(imageUrl: story.imageUrl),
-            Expanded(
-              flex: 1,
-              child: ClipRRect(
-                child: Image.asset(
-                  'assets/news_app_assets/card_smoothie.png',
-                  fit: BoxFit.fill,
-                  width: 100,
-                  height: 70,
-                ),
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            Expanded(
-              flex: 2,
-              child: Padding(
-                padding: const EdgeInsets.only(left: 8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      story.title,
-                      style: Theme.of(context).textTheme.bodyText1,
-                      textAlign: TextAlign.left,
-                    ),
-                    SizedBox(height: 8),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.access_time),
-                            SizedBox(width: 4),
-                            Text("4 hours ago",
-                                style: Theme.of(context).textTheme.bodyText2)
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Icon(Icons.remove_red_eye),
-                            SizedBox(width: 4),
-                            Text("376 views",
-                                style: Theme.of(context).textTheme.bodyText2)
-                          ],
-                        )
-                      ],
-                    )
-                  ],
+        child: Padding(
+          padding: const EdgeInsets.only(right: 8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              //NewsIcon(imageUrl: story.imageUrl),
+              Expanded(
+                flex: 1,
+                child: ClipRRect(
+                  child: Image.asset(
+                    'assets/news_app_assets/card_smoothie.png',
+                    fit: BoxFit.fill,
+                    width: 100,
+                    height: 70,
+                  ),
+                  borderRadius: BorderRadius.circular(12),
                 ),
               ),
-            ),
-          ],
+              Expanded(
+                flex: 2,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        story.title,
+                        style: Theme.of(context).textTheme.bodyText1,
+                        textAlign: TextAlign.left,
+                      ),
+                      SizedBox(height: 8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.access_time,
+                                color: Colors.grey,
+                              ),
+                              SizedBox(width: 4),
+                              Text(
+                                "4 hours ago",
+                                style:
+                                    TextStyle(color: Colors.grey, fontSize: 14),
+                              )
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Icon(Icons.remove_red_eye, color: Colors.grey),
+                              SizedBox(width: 4),
+                              Text(
+                                "376 views",
+                                style:
+                                    TextStyle(color: Colors.grey, fontSize: 14),
+                              )
+                            ],
+                          )
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ));
   }
 
