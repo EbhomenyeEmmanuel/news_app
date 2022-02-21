@@ -29,7 +29,7 @@ class BreakingNewsListView extends StatelessWidget {
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             itemBuilder: (context, index) {
-              return buildCard(_story[index], context);
+              return buildCard(_story[index], screenSize);
             },
             itemCount: _story.length,
             separatorBuilder: (BuildContext context, int index) {
@@ -40,7 +40,7 @@ class BreakingNewsListView extends StatelessWidget {
   }
 }
 
-Widget buildCard(Story story, BuildContext context) {
+Widget buildCard(Story story, Size screenSize) {
   return Column(
     mainAxisSize: MainAxisSize.max,
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,24 +52,27 @@ Widget buildCard(Story story, BuildContext context) {
           child: Image.asset(
             'assets/news_app_assets/card_smoothie.png',
             fit: BoxFit.fill,
-            width: 250,
+            width: screenSize.width,
           ),
           borderRadius: BorderRadius.circular(12),
         ),
       ),
       SizedBox(height: 8),
       Wrap(
+        spacing: 5,
         direction: Axis.vertical,
         runAlignment: WrapAlignment.start,
         children: [
           Text(
             '${story.title}',
-            style: Theme.of(context).textTheme.headline6,
+            style: TextStyle(
+                color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
             maxLines: 3,
           ),
-          Text("4 hours ago", style: Theme.of(context).textTheme.bodyText2),
+          Text("4 hours ago",
+              style: TextStyle(color: Colors.grey, fontSize: 14)),
           Text("By David E. Sanger",
-              style: Theme.of(context).textTheme.bodyText2),
+              style: TextStyle(color: Colors.grey, fontSize: 14)),
         ],
       )
     ],

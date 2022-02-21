@@ -1,1 +1,1 @@
-enum NewsCategories { general, tech, politics, entertainment, science }
+enum NewsCategories { general, tech, politics, business, entertainment, science }

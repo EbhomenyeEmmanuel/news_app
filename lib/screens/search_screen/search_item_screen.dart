@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:news_app/models/stories.dart';
+import 'package:news_app/screens/search_screen/search_item_details_choice_chip_manager.dart';
+import 'package:provider/provider.dart';
 
 class SearchItemScreen extends StatefulWidget {
   final Story _story;
@@ -13,8 +15,6 @@ class SearchItemScreen extends StatefulWidget {
 }
 
 class _SearchItemScreenState extends State<SearchItemScreen> {
-  ArticleChip _articleSelected = ArticleChip.AuthorOfArticle;
-
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
@@ -83,7 +83,7 @@ class _SearchItemScreenState extends State<SearchItemScreen> {
     return Container(
         padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
         decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.2),
+          color: Colors.transparent.withOpacity(0.2),
           borderRadius: BorderRadius.circular(16),
         ),
         child: Text(
@@ -119,80 +119,79 @@ class _SearchItemScreenState extends State<SearchItemScreen> {
   }
 
   Widget buildChoiceChipsDesign() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        ChoiceChip(
-          selectedColor: Colors.black,
-          selected: _articleSelected == ArticleChip.AuthorOfArticle,
-          label: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Icon(
-                Icons.person,
-                color: Colors.grey,
-              ),
-              SizedBox(
-                width: 4,
-              ),
-              Text(
-                "Micheal Savior",
-                overflow: TextOverflow.ellipsis,
-              )
-            ],
+    return Consumer<SearchItemDetailsChoiceChipManager>(
+        builder: (context, manager, child) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          ChoiceChip(
+            selectedColor: Colors.black,
+            selected:
+                manager.getSelectedChoiceChip() == ArticleChip.AuthorOfArticle,
+            label: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Icon(
+                  Icons.person,
+                  color: Colors.grey,
+                ),
+                SizedBox(
+                  width: 4,
+                ),
+                Text(
+                  "Micheal Savior",
+                  overflow: TextOverflow.ellipsis,
+                )
+              ],
+            ),
+            onSelected: (selected) {
+              manager.updateChoiceChip(ArticleChip.AuthorOfArticle);
+            },
           ),
-          onSelected: (selected) {
-            setState(() {
-              _articleSelected = ArticleChip.AuthorOfArticle;
-            });
-          },
-        ),
-        ChoiceChip(
-          selectedColor: Colors.black,
-          selected: _articleSelected == ArticleChip.TimeOfArticle,
-          label: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Icon(
-                Icons.access_time,
-                color: Colors.grey,
-              ),
-              SizedBox(
-                width: 4,
-              ),
-              Text("2 hrs")
-            ],
+          ChoiceChip(
+            selectedColor: Colors.black,
+            selected:
+                manager.getSelectedChoiceChip() == ArticleChip.TimeOfArticle,
+            label: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Icon(
+                  Icons.access_time,
+                  color: Colors.grey,
+                ),
+                SizedBox(
+                  width: 4,
+                ),
+                Text("2 hrs")
+              ],
+            ),
+            onSelected: (selected) {
+              manager.updateChoiceChip(ArticleChip.TimeOfArticle);
+            },
           ),
-          onSelected: (selected) {
-            setState(() {
-              _articleSelected = ArticleChip.TimeOfArticle;
-            });
-          },
-        ),
-        ChoiceChip(
-          selectedColor: Colors.black,
-          selected: _articleSelected == ArticleChip.NoOfVisits,
-          label: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Icon(
-                Icons.remove_red_eye_outlined,
-                color: Colors.grey,
-              ),
-              SizedBox(
-                width: 4,
-              ),
-              Text("376")
-            ],
+          ChoiceChip(
+            selectedColor: Colors.black,
+            selected: manager.getSelectedChoiceChip() == ArticleChip.NoOfVisits,
+            label: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Icon(
+                  Icons.remove_red_eye_outlined,
+                  color: Colors.grey,
+                ),
+                SizedBox(
+                  width: 4,
+                ),
+                Text("376")
+              ],
+            ),
+            onSelected: (selected) {
+              manager.updateChoiceChip(ArticleChip.NoOfVisits);
+            },
           ),
-          onSelected: (selected) {
-            setState(() {
-              _articleSelected = ArticleChip.NoOfVisits;
-            });
-          },
-        ),
-      ],
-    );
+        ],
+      );
+    });
   }
 }
 
