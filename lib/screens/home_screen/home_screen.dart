@@ -13,110 +13,103 @@ class HomeScreen extends StatelessWidget {
     final mockService = MockBreakingNewsService();
 
     Size screenSize = MediaQuery.of(context).size;
-    return ListView(
-      primary: true,
-      shrinkWrap: true,
-      scrollDirection: Axis.vertical,
-      children: [
-        Column(
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.start,
+    return Scaffold(
+      body: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Container(
+          constraints: BoxConstraints.expand(
+              width: screenSize.width, height: screenSize.height * 0.4),
+          decoration: BoxDecoration(
+            image: DecorationImage(
+                fit: BoxFit.cover,
+                image: AssetImage('assets/news_app_assets/card_smoothie.png')),
+            borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(36.0),
+                bottomRight: Radius.circular(36.0)),
+          ),
+          child: Stack(
             children: [
-              Container(
-                constraints: BoxConstraints.expand(
-                    width: screenSize.width, height: screenSize.height * 0.4),
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: AssetImage(
-                          'assets/news_app_assets/card_smoothie.png')),
-                  borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(36.0),
-                      bottomRight: Radius.circular(36.0)),
+              buildTintForBackgroundImage(),
+              Positioned(
+                left: 16,
+                top: 16,
+                child: IconButton(
+                  alignment: Alignment.centerLeft,
+                  padding: EdgeInsets.only(top: 16),
+                  color: Colors.white,
+                  icon: Icon(Icons.view_headline),
+                  onPressed: () {},
                 ),
-                child: Stack(
-                  children: [
-                    buildTintForBackgroundImage(),
-                    Positioned(
-                      left: 16,
-                      child: IconButton(
-                        alignment: Alignment.centerLeft,
-                        padding: EdgeInsets.zero,
-                        color: Colors.white,
-                        icon: Icon(Icons.view_headline),
-                        onPressed: () {},
+              ),
+              Positioned(
+                  left: 16,
+                  right: 10,
+                  bottom: 30,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      buildBlurNewsCategoryChip(),
+                      SizedBox(height: 16),
+                      Text(
+                        "'V.I.P.Immunization' for the Powerful and Their Cronies Rattles South America ",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 24),
+                        textAlign: TextAlign.start,
                       ),
-                    ),
-                    Positioned(
-                        left: 16,
-                        right: 10,
-                        bottom: 30,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            buildBlurNewsCategoryChip(),
-                            SizedBox(height: 16),
-                            Text(
-                              "'V.I.P.Immunization' for the Powerful and Their Cronies Rattles South America ",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 24),
-                              textAlign: TextAlign.start,
-                            ),
-                            SizedBox(height: 16),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Learn More",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14),
-                                  textAlign: TextAlign.start,
-                                ),
-                                SizedBox(width: 5),
-                                Icon(
-                                  Icons.arrow_forward,
-                                  color: Colors.white,
-                                ),
-                              ],
-                            )
-                          ],
-                        ))
-                  ],
-                ),
+                      SizedBox(height: 16),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Learn More",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14),
+                            textAlign: TextAlign.start,
+                          ),
+                          SizedBox(width: 5),
+                          Icon(
+                            Icons.arrow_forward,
+                            color: Colors.white,
+                          ),
+                        ],
+                      )
+                    ],
+                  ))
+            ],
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.all(16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text("Breaking News",
+                  style: Theme.of(context).textTheme.headline2),
+              Text(
+                "More", style: Theme.of(context).textTheme.headline3,
+                //TODO("Add onPressed to take you to gridView")
               ),
-              Padding(
-                padding: EdgeInsets.all(16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("Breaking News",
-                        style: Theme.of(context).textTheme.headline2),
-                    Text(
-                      "More", style: Theme.of(context).textTheme.headline3,
-                      //TODO("Add onPressed to take you to gridView")
-                    ),
-                  ],
-                ),
-              ),
-              FutureBuilder(
-                  future: mockService.getNewsData(),
-                  builder: (context, AsyncSnapshot<NewsData> snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      return BreakingNewsListView(
-                          story:
-                              snapshot.data?.todayStories.sublist(0, 4) ?? []);
-                    } else {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                  }),
-            ]),
-      ],
+            ],
+          ),
+        ),
+        Expanded(
+          child: FutureBuilder(
+              future: mockService.getNewsData(),
+              builder: (context, AsyncSnapshot<NewsData> snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  return BreakingNewsListView(
+                      story: snapshot.data?.todayStories.sublist(0, 4) ?? []);
+                } else {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+              }),
+        ),
+      ]),
     );
   }
 
