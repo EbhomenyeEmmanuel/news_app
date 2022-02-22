@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:lottie/lottie.dart';
 
-class EmptySearchScreen extends StatelessWidget {
+class EmptySearchScreen extends StatefulWidget {
   final String _category;
 
   EmptySearchScreen({Key? key, required String category})
       : _category = category,
         super(key: key);
 
+  @override
+  State<EmptySearchScreen> createState() => _EmptySearchScreenState();
+}
+
+class _EmptySearchScreenState extends State<EmptySearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -18,14 +25,24 @@ class EmptySearchScreen extends StatelessWidget {
             Flexible(
               child: AspectRatio(
                 aspectRatio: 1 / 1,
-                child: Image.asset('assets/news_app_assets/card_smoothie.png'),
+                child: FutureBuilder<LottieComposition>(
+                  future: _loadComposition(),
+                  builder: (context, snapshot) {
+                    var composition = snapshot.data;
+                    if (composition != null) {
+                      return Lottie(composition: composition);
+                    } else {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                  },
+                ),
               ),
             ),
             SizedBox(
-              height: 8,
+              height: 16,
             ),
             Text(
-              "Stories on $_category not found :(",
+              "Stories on ${widget._category} not found :(",
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 21.0, fontWeight: FontWeight.bold),
             ),
@@ -33,5 +50,10 @@ class EmptySearchScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<LottieComposition> _loadComposition() async {
+    var assetData = await rootBundle.load('assets/json/no_data_found.json');
+    return await LottieComposition.fromByteData(assetData);
   }
 }
