@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:news_app/api/mock_news_service.dart';
+import 'package:news_app/models/news.dart';
 import 'package:news_app/models/news_categories.dart';
 import 'package:news_app/models/news_data.dart';
-import 'package:news_app/models/stories.dart';
 import 'package:news_app/screens/search_screen/empty_search_screen.dart';
 import 'package:news_app/screens/search_screen/search_item_screen.dart';
+
+import '../../api/news_repository.dart';
+import '../../components/news_icon.dart';
 
 class SearchScreen extends StatefulWidget {
   @override
@@ -12,14 +14,11 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  final mockService = MockBreakingNewsService();
+  final allNewsRepo = NewsRepository();
 
   @override
   Widget build(BuildContext context) {
-    Size screenSize = MediaQuery.of(context).size;
-    int _currentCategoryStateIndex = 0;
     final primaryColor = Theme.of(context).primaryColor;
-
     return Scaffold(
       body: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -128,24 +127,11 @@ class _SearchScreenState extends State<SearchScreen> {
         ));
   }
 
-  ListView buildList(List<Story> story) {
-    return ListView.separated(
-      scrollDirection: Axis.vertical,
-      itemBuilder: (context, index) {
-        return buildCard(story[index], context);
-      },
-      itemCount: story.length,
-      separatorBuilder: (BuildContext context, int index) {
-        return SizedBox(height: 8);
-      },
-    );
-  }
-
-  List<Story> getNewsByCategory(List<Story> list, String category) {
-    var filteredList = <Story>[];
-    for (Story story in list) {
-      if (story.categories.toString().contains(category.toLowerCase())) {
-        filteredList.add(story);
+  List<News> getNewsByCategory(List<News> list, String category) {
+    var filteredList = <News>[];
+    for (News news in list) {
+      if (news.categories.toString().contains(category.toLowerCase())) {
+        filteredList.add(news);
       }
     }
     return filteredList;
@@ -153,15 +139,15 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Widget buildTabViewList(String category) {
     return FutureBuilder(
-        future: mockService.getNewsData(),
-        builder: (context, AsyncSnapshot<NewsData> snapshot) {
+        future: allNewsRepo.getAllNewsByCategoryData(category.toLowerCase()),
+        builder: (context, AsyncSnapshot<AllNewsData> snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            var listOfNewsByCategory =
-                getNewsByCategory(snapshot.data?.todayStories ?? [], category);
+            var listOfNewsByCategory = snapshot.data?.allNews ?? [];
+                // getNewsByCategory(snapshot.data?.allNews ?? [], category);
             if (listOfNewsByCategory.isEmpty) {
               return EmptySearchScreen(category: category);
             } else {
-              return buildList(listOfNewsByCategory);
+              return SearchScreenListWidget(newsList: listOfNewsByCategory);
             }
           } else {
             return const Center(
@@ -177,83 +163,6 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  Widget buildCard(Story story, BuildContext context) {
-    return InkWell(
-        onTap: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return SearchItemScreen(news: story);
-          }));
-        },
-        child: Padding(
-          padding: const EdgeInsets.only(right: 8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              //NewsIcon(imageUrl: story.imageUrl),
-              Expanded(
-                flex: 1,
-                child: ClipRRect(
-                  child: Image.asset(
-                    'assets/news_app_assets/card_smoothie.png',
-                    fit: BoxFit.fill,
-                    width: 100,
-                    height: 70,
-                  ),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              Expanded(
-                flex: 2,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        story.title,
-                        style: Theme.of(context).textTheme.bodyText1,
-                        textAlign: TextAlign.left,
-                      ),
-                      SizedBox(height: 8),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.access_time,
-                                color: Colors.grey,
-                              ),
-                              SizedBox(width: 4),
-                              Text(
-                                "4 hours ago",
-                                style:
-                                    TextStyle(color: Colors.grey, fontSize: 14),
-                              )
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Icon(Icons.remove_red_eye, color: Colors.grey),
-                              SizedBox(width: 4),
-                              Text(
-                                "376 views",
-                                style:
-                                    TextStyle(color: Colors.grey, fontSize: 14),
-                              )
-                            ],
-                          )
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ));
-  }
-
   List getTabNames() {
     var listOfTabNames = <String>[];
     for (NewsCategories newsCategory in NewsCategories.values) {
@@ -263,5 +172,114 @@ class _SearchScreenState extends State<SearchScreen> {
       listOfTabNames.add(capitalizedNewsCategory);
     }
     return listOfTabNames;
+  }
+}
+
+class SearchScreenListWidget extends StatefulWidget {
+  final List<News> _allNewsList;
+
+  const SearchScreenListWidget({Key? key, required List<News> newsList})
+      : _allNewsList = newsList,
+        super(key: key);
+
+  @override
+  State<SearchScreenListWidget> createState() => _SearchScreenListWidgetState();
+}
+
+class _SearchScreenListWidgetState extends State<SearchScreenListWidget> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+      controller: _scrollController,
+      scrollDirection: Axis.vertical,
+      itemBuilder: (context, index) {
+        final News newsItem = widget._allNewsList[index];
+        return InkWell(
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return SearchItemScreen(news: newsItem);
+              }));
+            },
+            child: Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  NewsIcon(imageUrl: newsItem.imageUrl, imageHeight: 70, imageWidth: 100),
+                  Expanded(
+                    flex: 2,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            newsItem.title,
+                            style: Theme.of(context).textTheme.bodyText1,
+                            textAlign: TextAlign.left,
+                          ),
+                          SizedBox(height: 8),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.access_time,
+                                    color: Colors.grey,
+                                  ),
+                                  SizedBox(width: 4),
+                                  Text(
+                                    "4 hours ago",
+                                    style: TextStyle(
+                                        color: Colors.grey, fontSize: 14),
+                                  )
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Icon(Icons.remove_red_eye,
+                                      color: Colors.grey),
+                                  SizedBox(width: 4),
+                                  Text(
+                                    "376 views",
+                                    style: TextStyle(
+                                        color: Colors.grey, fontSize: 14),
+                                  )
+                                ],
+                              )
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ));
+      },
+      itemCount: widget._allNewsList.length,
+      separatorBuilder: (BuildContext context, int index) {
+        return SizedBox(height: 8);
+      },
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(() {
+      if(_scrollController.position.pixels >= _scrollController.position.maxScrollExtent){
+
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _scrollController.dispose();
   }
 }

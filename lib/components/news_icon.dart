@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 class NewsIcon extends StatelessWidget {
   final String imageUrl;
   final double imageHeight;
+  final double imageWidth;
 
-  NewsIcon({Key? key, required this.imageUrl, this.imageHeight = 210}): super(key: key);
+  NewsIcon({Key? key, required this.imageUrl, this.imageHeight = 210, required this.imageWidth}): super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -13,9 +14,13 @@ class NewsIcon extends StatelessWidget {
         child: ClipRRect(child: CachedNetworkImage(
           imageUrl: imageUrl,
           height: imageHeight,
+          width: imageWidth,
           fit: BoxFit.fill,
           progressIndicatorBuilder: (context, url, downloadProgress) =>
-              CircularProgressIndicator(value: downloadProgress.progress),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: CircularProgressIndicator(value: downloadProgress.progress),
+              ),
           errorWidget: (context, url, error) => Icon(Icons.error),),
           borderRadius: BorderRadius.circular(12),
         ));

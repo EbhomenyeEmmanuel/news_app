@@ -15,9 +15,7 @@ class _HomeState extends State<HomePage> {
   static List<Widget> pages = <Widget>[
     HomeScreen(),
     SearchScreen(),
-    Container(
-      color: Colors.blue,
-    ),
+    //Container( color: Colors.blue,),
   ];
 
   @override
@@ -36,8 +34,7 @@ class _HomeState extends State<HomePage> {
           const BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           const BottomNavigationBarItem(
               icon: Icon(Icons.search), label: 'Search'),
-          const BottomNavigationBarItem(
-              icon: Icon(Icons.account_circle), label: 'Profile'),
+          //const BottomNavigationBarItem( icon: Icon(Icons.account_circle), label: 'Profile'),
         ],
       ),
     );

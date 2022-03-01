@@ -1,3 +1,4 @@
+import 'news.dart';
 import 'stories.dart';
 
 class NewsData {
@@ -5,5 +6,13 @@ class NewsData {
 
   NewsData(
     this.todayStories,
+  );
+}
+
+class AllNewsData {
+  final List<News> allNews;
+
+  AllNewsData(
+    this.allNews,
   );
 }

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:news_app/models/stories.dart';
+import 'package:news_app/models/news.dart';
 
 class SearchItemScreen extends StatefulWidget {
-  final Story _story;
+  final News _story;
 
-  SearchItemScreen({Key? key, required Story news})
+  SearchItemScreen({Key? key, required News news})
       : _story = news,
         super(key: key);
 
@@ -26,7 +26,7 @@ class _SearchItemScreenState extends State<SearchItemScreen> {
           decoration: BoxDecoration(
             image: DecorationImage(
                 fit: BoxFit.cover,
-                image: AssetImage('assets/news_app_assets/card_smoothie.png')),
+                image: NetworkImage( widget._story.imageUrl)),
           ),
           child: Container(
             decoration: BoxDecoration(
@@ -70,7 +70,7 @@ class _SearchItemScreenState extends State<SearchItemScreen> {
                       ]),
                 ),
                 SizedBox(height: 16.0),
-                CurvedCardDesignWidget()
+                CurvedCardDesignWidget(story: widget._story,)
               ],
             ),
           ),
@@ -93,7 +93,8 @@ class _SearchItemScreenState extends State<SearchItemScreen> {
 }
 
 class CurvedCardDesignWidget extends StatelessWidget {
-  const CurvedCardDesignWidget({Key? key}) : super(key: key);
+  final News _story;
+  const CurvedCardDesignWidget({Key? key, required News story}) : _story = story, super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -111,11 +112,14 @@ class CurvedCardDesignWidget extends StatelessWidget {
           children: [
             ChoiceChipsWidget(),
             SizedBox(height: 16),
-            Text("Candidate Biden Called Saudi",
+            Text(_story.description,
                 style: Theme.of(context).textTheme.headline6),
             SizedBox(height: 8),
             Text(
-                "Capture the beauty that catches your eye with a mirrorless camera that you don't want to lose",
+                _story.snippets,
+                style: Theme.of(context).textTheme.bodyText2),
+            Text(
+                _story.snippets,
                 style: Theme.of(context).textTheme.bodyText2),
           ],
         ),
