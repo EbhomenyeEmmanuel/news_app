@@ -4,9 +4,11 @@ import 'package:news_app/models/news_categories.dart';
 import 'package:news_app/models/news_data.dart';
 import 'package:news_app/screens/search_screen/empty_search_screen.dart';
 import 'package:news_app/screens/search_screen/search_item_screen.dart';
+import 'package:provider/provider.dart';
 
 import '../../api/news_repository.dart';
 import '../../components/news_icon.dart';
+import '../../provider/search_key_manager.dart';
 
 class SearchScreen extends StatefulWidget {
   @override
@@ -24,73 +26,9 @@ class _SearchScreenState extends State<SearchScreen> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            buildSearchHeader(primaryColor),
+            SearchHeaderWidget(context: context, primaryColor: primaryColor),
             Expanded(child: buildTabsFromTabView(context)),
           ]),
-    );
-  }
-
-  Widget buildSearchHeader(Color primaryColor) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 16.0, top: 16.0, right: 16.0),
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          IconButton(
-            alignment: Alignment.centerLeft,
-            padding: EdgeInsets.only(top: 16.0),
-            icon: Icon(Icons.view_headline),
-            onPressed: () {},
-          ),
-          SizedBox(height: 16),
-          Text("Discover", style: Theme.of(context).textTheme.headline1),
-          SizedBox(height: 8),
-          Text("News from all over the world ",
-              style: TextStyle(
-                  color: Colors.grey,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14)),
-          SizedBox(height: 16),
-          buildSearchEditText(primaryColor),
-          SizedBox(height: 8),
-        ],
-      ),
-    );
-  }
-
-  Container buildSearchEditText(Color primaryColor) {
-    return Container(
-      height: 54,
-      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-      decoration: BoxDecoration(
-        color: Colors.transparent.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          SizedBox(width: 4),
-          Flexible(
-            child: TextField(
-              cursorColor: primaryColor.withOpacity(0.5),
-              decoration: InputDecoration(
-                hintText: 'Search',
-                hintStyle: TextStyle(
-                  color: primaryColor.withOpacity(0.5),
-                ),
-                enabledBorder: InputBorder.none,
-                focusedBorder: InputBorder.none,
-                suffixIcon: Icon(
-                  Icons.search,
-                  color: primaryColor.withOpacity(0.5),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -120,7 +58,8 @@ class _SearchScreenState extends State<SearchScreen> {
                 ),
                 Expanded(
                   child: TabBarView(children: [
-                    for (var i in getTabNames()) buildTabViewList(i)
+                    for (var category in getTabNames())
+                      TabViewWidget(category: category)
                   ]),
                 ),
               ]),
@@ -135,26 +74,6 @@ class _SearchScreenState extends State<SearchScreen> {
       }
     }
     return filteredList;
-  }
-
-  Widget buildTabViewList(String category) {
-    return FutureBuilder(
-        future: allNewsRepo.getAllNewsByCategoryData(category.toLowerCase()),
-        builder: (context, AsyncSnapshot<AllNewsData> snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            var listOfNewsByCategory = snapshot.data?.allNews ?? [];
-                // getNewsByCategory(snapshot.data?.allNews ?? [], category);
-            if (listOfNewsByCategory.isEmpty) {
-              return EmptySearchScreen(category: category);
-            } else {
-              return SearchScreenListWidget(newsList: listOfNewsByCategory);
-            }
-          } else {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        });
   }
 
   Widget buildTabForTabBar(String tabTitle) {
@@ -172,6 +91,155 @@ class _SearchScreenState extends State<SearchScreen> {
       listOfTabNames.add(capitalizedNewsCategory);
     }
     return listOfTabNames;
+  }
+}
+
+class SearchHeaderWidget extends StatelessWidget {
+  const SearchHeaderWidget({
+    Key? key,
+    required this.context,
+    required this.primaryColor,
+  }) : super(key: key);
+
+  final BuildContext context;
+  final Color primaryColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 16.0, top: 16.0, right: 16.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          IconButton(
+            alignment: Alignment.centerLeft,
+            padding: EdgeInsets.only(top: 16.0),
+            icon: Icon(Icons.view_headline),
+            onPressed: () {},
+          ),
+          SizedBox(height: 16),
+          Text("Discover", style: Theme.of(context).textTheme.headline1),
+          SizedBox(height: 8),
+          Text("News from all over the world ",
+              style: TextStyle(
+                  color: Colors.grey,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14)),
+          SizedBox(height: 16),
+          SearchEditTextWidget(primaryColor: primaryColor),
+          SizedBox(height: 8),
+        ],
+      ),
+    );
+  }
+}
+
+class TabViewWidget extends StatelessWidget {
+  const TabViewWidget({
+    Key? key,
+    required this.category,
+  }) : super(key: key);
+
+  final String category;
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<SearchKeyManager>(
+        builder: (context, searchKeyManager, child) {
+      return FutureBuilder(
+          future: (searchKeyManager.getSearchKey().isNotEmpty)
+              ? NewsRepository().searchAllNewsByCategoryData(
+                  category.toLowerCase(), searchKeyManager.getSearchKey())
+              : NewsRepository()
+                  .getAllNewsByCategoryData(category.toLowerCase()),
+          builder: (context, AsyncSnapshot<AllNewsData> snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              var listOfNewsByCategory = snapshot.data?.allNews ?? [];
+              // getNewsByCategory(snapshot.data?.allNews ?? [], category);
+              if (listOfNewsByCategory.isEmpty) {
+                return EmptySearchScreen(category: category);
+              } else {
+                return SearchScreenListWidget(newsList: listOfNewsByCategory);
+              }
+            } else {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          });
+    });
+  }
+}
+
+class SearchEditTextWidget extends StatefulWidget {
+  const SearchEditTextWidget({
+    Key? key,
+    required this.primaryColor,
+  }) : super(key: key);
+
+  final Color primaryColor;
+
+  @override
+  State<SearchEditTextWidget> createState() => _SearchEditTextWidgetState();
+}
+
+class _SearchEditTextWidgetState extends State<SearchEditTextWidget> {
+  late TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<SearchKeyManager>(
+        builder: (context, searchKeyManager, child) {
+      return Container(
+        height: 54,
+        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+        decoration: BoxDecoration(
+          color: Colors.transparent.withOpacity(0.2),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            SizedBox(width: 4),
+            Flexible(
+              child: TextField(
+                controller: _controller,
+                onSubmitted: (String value) async {
+                  searchKeyManager.setSearchKey(value);
+                },
+                cursorColor: widget.primaryColor.withOpacity(0.5),
+                decoration: InputDecoration(
+                  hintText: 'Search',
+                  hintStyle: TextStyle(
+                    color: widget.primaryColor.withOpacity(0.5),
+                  ),
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  suffixIcon: Icon(
+                    Icons.search,
+                    color: widget.primaryColor.withOpacity(0.5),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    });
   }
 }
 
@@ -207,7 +275,10 @@ class _SearchScreenListWidgetState extends State<SearchScreenListWidget> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  NewsIcon(imageUrl: newsItem.imageUrl, imageHeight: 70, imageWidth: 100),
+                  NewsIcon(
+                      imageUrl: newsItem.imageUrl,
+                      imageHeight: 70,
+                      imageWidth: 100),
                   Expanded(
                     flex: 2,
                     child: Padding(
@@ -271,9 +342,8 @@ class _SearchScreenListWidgetState extends State<SearchScreenListWidget> {
   void initState() {
     super.initState();
     _scrollController.addListener(() {
-      if(_scrollController.position.pixels >= _scrollController.position.maxScrollExtent){
-
-      }
+      if (_scrollController.position.pixels >=
+          _scrollController.position.maxScrollExtent) {}
     });
   }
 
