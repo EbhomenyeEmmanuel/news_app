@@ -158,11 +158,9 @@ class TabViewWidget extends StatelessWidget {
             if (snapshot.connectionState == ConnectionState.done) {
               var listOfNewsByCategory = snapshot.data?.allNews ?? [];
               // getNewsByCategory(snapshot.data?.allNews ?? [], category);
-              if (listOfNewsByCategory.isEmpty) {
-                return EmptySearchScreen(category: category);
-              } else {
-                return SearchScreenListWidget(newsList: listOfNewsByCategory);
-              }
+              return (listOfNewsByCategory.isEmpty)
+                  ? EmptySearchScreen(category: category)
+                  : SearchScreenListWidget(newsList: listOfNewsByCategory);
             } else {
               return const Center(
                 child: CircularProgressIndicator(),
@@ -280,7 +278,6 @@ class _SearchScreenListWidgetState extends State<SearchScreenListWidget> {
                       imageHeight: 70,
                       imageWidth: 100),
                   Expanded(
-                    flex: 2,
                     child: Padding(
                       padding: const EdgeInsets.only(left: 8.0),
                       child: Column(
