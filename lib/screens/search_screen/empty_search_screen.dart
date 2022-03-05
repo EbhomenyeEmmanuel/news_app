@@ -3,9 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
 
 class EmptySearchScreen extends StatefulWidget {
-  final String _category;
+  final String? _category;
 
-  EmptySearchScreen({Key? key, required String category})
+  EmptySearchScreen({Key? key, String? category})
       : _category = category,
         super(key: key);
 
@@ -41,7 +41,12 @@ class _EmptySearchScreenState extends State<EmptySearchScreen> {
             SizedBox(
               height: 16,
             ),
+            (widget._category == null)?
             Text(
+              "Stories not found :(",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 21.0, fontWeight: FontWeight.bold),
+            ): Text(
               "Stories on ${widget._category} not found :(",
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 21.0, fontWeight: FontWeight.bold),
