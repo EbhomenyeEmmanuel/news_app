@@ -1,16 +1,15 @@
-import 'dart:ui';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:news_app/api/mock_news_service.dart';
+import 'package:news_app/api/news_repository.dart';
 import 'package:news_app/models/news_data.dart';
+import 'package:news_app/screens/home_screen/MoreBreakingNews.dart';
 
 import 'breaking_news_list_view.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final mockService = MockBreakingNewsService();
+    final repo = NewsRepository();
 
     Size screenSize = MediaQuery.of(context).size;
     return Scaffold(
@@ -88,16 +87,22 @@ class HomeScreen extends StatelessWidget {
             children: [
               Text("Breaking News",
                   style: Theme.of(context).textTheme.headline2),
-              Text(
-                "More", style: Theme.of(context).textTheme.headline3,
-                //TODO("Add onPressed to take you to gridView")
+              InkWell(
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return MoreBreakingNews();
+                  }));
+                },
+                child: Text(
+                  "More", style: Theme.of(context).textTheme.headline3,
+                ),
               ),
             ],
           ),
         ),
         Expanded(
           child: FutureBuilder(
-              future: mockService.getNewsData(),
+              future: repo.getTopStoriesData(),
               builder: (context, AsyncSnapshot<NewsData> snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
                   return BreakingNewsListView(
