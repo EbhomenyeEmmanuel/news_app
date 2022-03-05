@@ -6,23 +6,28 @@ class NewsIcon extends StatelessWidget {
   final double imageHeight;
   final double imageWidth;
 
-  NewsIcon({Key? key, required this.imageUrl, this.imageHeight = 210, required this.imageWidth}): super(key: key);
+  NewsIcon(
+      {Key? key,
+      required this.imageUrl,
+      this.imageHeight = 210,
+      required this.imageWidth})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-        child: ClipRRect(child: CachedNetworkImage(
-          imageUrl: imageUrl,
-          height: imageHeight,
-          width: imageWidth,
-          fit: BoxFit.fill,
-          progressIndicatorBuilder: (context, url, downloadProgress) =>
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: CircularProgressIndicator(value: downloadProgress.progress),
-              ),
-          errorWidget: (context, url, error) => Icon(Icons.error),),
-          borderRadius: BorderRadius.circular(12),
-        ));
+    return ClipRRect(
+      child: CachedNetworkImage(
+        imageUrl: imageUrl,
+        height: imageHeight,
+        width: imageWidth,
+        fit: BoxFit.fill,
+        progressIndicatorBuilder: (context, url, downloadProgress) => Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: CircularProgressIndicator(value: downloadProgress.progress),
+        ),
+        errorWidget: (context, url, error) => Icon(Icons.error),
+      ),
+      borderRadius: BorderRadius.circular(12),
+    );
   }
 }
