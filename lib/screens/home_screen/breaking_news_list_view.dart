@@ -47,15 +47,9 @@ class CardWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          //NewsIcon(imageUrl: story.imageUrl),
-          Expanded(
-            child: ClipRRect(
-              child: Image.asset(
-                'assets/news_app_assets/card_smoothie.png',
-                fit: BoxFit.fill,
-              ),
-              borderRadius: BorderRadius.circular(12),
-            ),
+          NewsIcon(
+            imageUrl: _story.imageUrl,
+            imageWidth: 250,
           ),
           SizedBox(height: 8),
           Column(
