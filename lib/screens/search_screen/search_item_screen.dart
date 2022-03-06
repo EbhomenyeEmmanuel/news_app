@@ -25,8 +25,7 @@ class _SearchItemScreenState extends State<SearchItemScreen> {
               width: screenSize.width, height: screenSize.height),
           decoration: BoxDecoration(
             image: DecorationImage(
-                fit: BoxFit.cover,
-                image: NetworkImage( widget._story.imageUrl)),
+                fit: BoxFit.cover, image: NetworkImage(widget._story.imageUrl)),
           ),
           child: Container(
             decoration: BoxDecoration(
@@ -59,18 +58,13 @@ class _SearchItemScreenState extends State<SearchItemScreen> {
                               fontWeight: FontWeight.bold,
                               fontSize: 24),
                         ),
-                        SizedBox(height: 16.0),
-                        Text(
-                          widget._story.snippets,
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.normal,
-                              fontSize: 16),
-                        ),
+                        SizedBox(height: 8.0),
                       ]),
                 ),
                 SizedBox(height: 16.0),
-                CurvedCardDesignWidget(story: widget._story,)
+                CurvedCardDesignWidget(
+                  story: widget._story,
+                )
               ],
             ),
           ),
@@ -87,14 +81,25 @@ class _SearchItemScreenState extends State<SearchItemScreen> {
           borderRadius: BorderRadius.circular(16),
         ),
         child: Text(
-          widget._story.categories.toString(),
+          formatCategories(widget._story.categories.toString()),
+          style: TextStyle(color: Colors.white),
         ));
+  }
+
+  String formatCategories(String categories) {
+    var formattedValue = categories.replaceAll('[', '').replaceAll(']', '');
+    formattedValue =
+        formattedValue[0].toUpperCase() + formattedValue.substring(1);
+    return formattedValue;
   }
 }
 
 class CurvedCardDesignWidget extends StatelessWidget {
   final News _story;
-  const CurvedCardDesignWidget({Key? key, required News story}) : _story = story, super(key: key);
+
+  const CurvedCardDesignWidget({Key? key, required News story})
+      : _story = story,
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -112,15 +117,19 @@ class CurvedCardDesignWidget extends StatelessWidget {
           children: [
             ChoiceChipsWidget(),
             SizedBox(height: 16),
-            Text(_story.description,
-                style: Theme.of(context).textTheme.headline6),
-            SizedBox(height: 8),
-            Text(
-                _story.snippets,
-                style: Theme.of(context).textTheme.bodyText2),
-            Text(
-                _story.snippets,
-                style: Theme.of(context).textTheme.bodyText2),
+            Text(_story.snippets,
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+            SizedBox(height: 16),
+            Text(_story.description, style: TextStyle(fontSize: 14)),
+            Text(_story.description, style: TextStyle(fontSize: 14)),
+            Text(_story.description, style: TextStyle(fontSize: 14)),
+            Text(_story.description, style: TextStyle(fontSize: 14)),
+            SizedBox(height: 16),
+            Align(
+                alignment: Alignment.bottomRight,
+                child: Text(_story.source,
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 14))),
           ],
         ),
       ),
