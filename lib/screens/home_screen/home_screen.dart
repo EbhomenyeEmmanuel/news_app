@@ -21,7 +21,6 @@ class HomeScreen extends StatelessWidget {
             builder: (context, AsyncSnapshot<NewsData> snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
                 final stories = snapshot.data?.todayStories ?? [];
-                final firstStory = stories.first;
                 return stories.isNotEmpty
                     ? Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -33,7 +32,7 @@ class HomeScreen extends StatelessWidget {
                               decoration: BoxDecoration(
                                 image: DecorationImage(
                                     fit: BoxFit.fill,
-                                    image: NetworkImage(firstStory.imageUrl)),
+                                    image: NetworkImage(stories.first.imageUrl)),
                                 borderRadius: BorderRadius.only(
                                     bottomLeft: Radius.circular(36.0),
                                     bottomRight: Radius.circular(36.0)),
@@ -63,7 +62,7 @@ class HomeScreen extends StatelessWidget {
                                           buildBlurNewsCategoryChip(),
                                           SizedBox(height: 16),
                                           Text(
-                                            firstStory.title,
+                                            stories.first.title,
                                             style: TextStyle(
                                                 color: Colors.white,
                                                 fontWeight: FontWeight.bold,
