@@ -53,10 +53,7 @@ class CardWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('${_story.title}',
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold)),
+                    style: Theme.of(context).textTheme.headline6),
                 SizedBox(
                   height: 5,
                 ),
@@ -79,9 +76,9 @@ class CardWidget extends StatelessWidget {
         ),
       ),
       onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) {
-          return Text("");
-        }));
+        // Navigator.push(context, MaterialPageRoute(builder: (context) {
+        //   return null;
+        // }));
       },
     );
   }

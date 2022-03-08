@@ -25,7 +25,7 @@ class _SearchItemScreenState extends State<SearchItemScreen> {
               width: screenSize.width, height: screenSize.height),
           decoration: BoxDecoration(
             image: DecorationImage(
-                fit: BoxFit.cover, image: NetworkImage(widget._story.imageUrl)),
+                fit: BoxFit.fill, image: NetworkImage(widget._story.imageUrl)),
           ),
           child: Container(
             decoration: BoxDecoration(
@@ -107,7 +107,7 @@ class CurvedCardDesignWidget extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.all(16),
         decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).scaffoldBackgroundColor,
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(30),
               topRight: Radius.circular(30),
@@ -117,13 +117,12 @@ class CurvedCardDesignWidget extends StatelessWidget {
           children: [
             ChoiceChipsWidget(),
             SizedBox(height: 16),
-            Text(_story.snippets,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+            Text(_story.snippets, style: Theme.of(context).textTheme.headline3),
             SizedBox(height: 16),
-            Text(_story.description, style: TextStyle(fontSize: 14)),
-            Text(_story.description, style: TextStyle(fontSize: 14)),
-            Text(_story.description, style: TextStyle(fontSize: 14)),
-            Text(_story.description, style: TextStyle(fontSize: 14)),
+            Text(_story.description,
+                style: Theme.of(context).textTheme.bodyText1),
+            Text(_story.description,
+                style: Theme.of(context).textTheme.bodyText1),
             SizedBox(height: 16),
             Align(
                 alignment: Alignment.bottomRight,
@@ -168,7 +167,7 @@ class _ChoiceChipsWidgetState extends State<ChoiceChipsWidget> {
               Text(
                 "Micheal S.",
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(color: Colors.white, fontSize: 14),
+                style: TextStyle(color: Colors.grey, fontSize: 14),
               )
             ],
           ),
@@ -193,7 +192,7 @@ class _ChoiceChipsWidgetState extends State<ChoiceChipsWidget> {
               ),
               Text(
                 "2 hrs",
-                style: TextStyle(color: Colors.white, fontSize: 14),
+                style: Theme.of(context).textTheme.bodyText1,
               )
             ],
           ),
@@ -218,7 +217,7 @@ class _ChoiceChipsWidgetState extends State<ChoiceChipsWidget> {
               ),
               Text(
                 "376",
-                style: TextStyle(color: Colors.white, fontSize: 14),
+                style: Theme.of(context).textTheme.bodyText1,
               )
             ],
           ),

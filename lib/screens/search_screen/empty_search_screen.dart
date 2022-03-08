@@ -45,11 +45,11 @@ class _EmptySearchScreenState extends State<EmptySearchScreen> {
             Text(
               "Stories not found :(",
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 21.0, fontWeight: FontWeight.bold),
+              style: Theme.of(context).textTheme.headline3,
             ): Text(
               "Stories on ${widget._category} not found :(",
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 21.0, fontWeight: FontWeight.bold),
+              style: Theme.of(context).textTheme.headline3,
             ),
           ],
         ),

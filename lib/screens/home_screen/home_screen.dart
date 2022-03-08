@@ -1,19 +1,18 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:news_app/api/news_repository.dart';
+import 'package:news_app/components/change_theme_button_widget.dart';
+import 'package:news_app/components/shimmer_home_widget.dart';
 import 'package:news_app/models/news_data.dart';
 import 'package:news_app/screens/home_screen/MoreBreakingNews.dart';
 
-import '../../models/stories.dart';
 import '../search_screen/empty_search_screen.dart';
 import 'breaking_news_list_view.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final List<Story> _story;
     final repo = NewsRepository();
-
+    var theme = Theme.of(context);
     Size screenSize = MediaQuery.of(context).size;
     return Scaffold(
         body: FutureBuilder(
@@ -32,7 +31,8 @@ class HomeScreen extends StatelessWidget {
                               decoration: BoxDecoration(
                                 image: DecorationImage(
                                     fit: BoxFit.fill,
-                                    image: NetworkImage(stories.first.imageUrl)),
+                                    image:
+                                        NetworkImage(stories.first.imageUrl)),
                                 borderRadius: BorderRadius.only(
                                     bottomLeft: Radius.circular(36.0),
                                     bottomRight: Radius.circular(36.0)),
@@ -51,6 +51,9 @@ class HomeScreen extends StatelessWidget {
                                       onPressed: () {},
                                     ),
                                   ),
+                                  Positioned(
+                                      right: 16,
+                                      child: ChangeThemeButtonWidget()),
                                   Positioned(
                                       left: 16,
                                       right: 10,
@@ -101,9 +104,7 @@ class HomeScreen extends StatelessWidget {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text("Breaking News",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .headline2),
+                                      style: theme.textTheme.headline2),
                                   InkWell(
                                     onTap: () {
                                       Navigator.push(context,
@@ -113,8 +114,7 @@ class HomeScreen extends StatelessWidget {
                                     },
                                     child: Text(
                                       "More",
-                                      style:
-                                          Theme.of(context).textTheme.headline3,
+                                      style: theme.textTheme.headline3,
                                     ),
                                   ),
                                 ],
@@ -127,9 +127,7 @@ class HomeScreen extends StatelessWidget {
                           ])
                     : EmptySearchScreen();
               } else {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
+                return ShimmerHomeWidget();
               }
             }));
   }

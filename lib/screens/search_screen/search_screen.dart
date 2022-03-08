@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:news_app/components/shimmer_search_list_widget.dart';
 import 'package:news_app/models/news.dart';
 import 'package:news_app/models/news_categories.dart';
 import 'package:news_app/models/news_data.dart';
@@ -7,6 +8,7 @@ import 'package:news_app/screens/search_screen/search_item_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../../api/news_repository.dart';
+import '../../components/change_theme_button_widget.dart';
 import '../../components/news_icon.dart';
 import '../../provider/search_key_manager.dart';
 
@@ -20,13 +22,12 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final primaryColor = Theme.of(context).primaryColor;
     return Scaffold(
       body: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SearchHeaderWidget(context: context, primaryColor: primaryColor),
+            SearchHeaderWidget(context: context),
             Expanded(child: buildTabsFromTabView(context)),
           ]),
     );
@@ -50,6 +51,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       labelPadding: EdgeInsets.symmetric(horizontal: 8),
                       indicatorColor: Colors.black,
                       labelColor: Colors.black,
+                      indicatorWeight: 4,
                       unselectedLabelColor: Colors.grey,
                       tabs: [
                         for (var tabName in getTabNames())
@@ -98,11 +100,9 @@ class SearchHeaderWidget extends StatelessWidget {
   const SearchHeaderWidget({
     Key? key,
     required this.context,
-    required this.primaryColor,
   }) : super(key: key);
 
   final BuildContext context;
-  final Color primaryColor;
 
   @override
   Widget build(BuildContext context) {
@@ -113,11 +113,17 @@ class SearchHeaderWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          IconButton(
-            alignment: Alignment.centerLeft,
-            padding: EdgeInsets.only(top: 16.0),
-            icon: Icon(Icons.view_headline),
-            onPressed: () {},
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                alignment: Alignment.centerLeft,
+                padding: EdgeInsets.only(top: 16.0),
+                icon: Icon(Icons.view_headline),
+                onPressed: () {},
+              ),
+              ChangeThemeButtonWidget(),
+            ],
           ),
           SizedBox(height: 16),
           Text("Discover", style: Theme.of(context).textTheme.headline1),
@@ -128,7 +134,7 @@ class SearchHeaderWidget extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                   fontSize: 14)),
           SizedBox(height: 16),
-          SearchEditTextWidget(primaryColor: primaryColor),
+          SearchEditTextWidget(),
           SizedBox(height: 8),
         ],
       ),
@@ -162,8 +168,8 @@ class TabViewWidget extends StatelessWidget {
                   ? EmptySearchScreen(category: category)
                   : SearchScreenListWidget(newsList: listOfNewsByCategory);
             } else {
-              return const Center(
-                child: CircularProgressIndicator(),
+              return Center(
+                child: ShimmerSearchListWidget(),
               );
             }
           });
@@ -174,10 +180,7 @@ class TabViewWidget extends StatelessWidget {
 class SearchEditTextWidget extends StatefulWidget {
   const SearchEditTextWidget({
     Key? key,
-    required this.primaryColor,
   }) : super(key: key);
-
-  final Color primaryColor;
 
   @override
   State<SearchEditTextWidget> createState() => _SearchEditTextWidgetState();
@@ -200,13 +203,15 @@ class _SearchEditTextWidgetState extends State<SearchEditTextWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final primaryColor = Theme.of(context).primaryColor;
+
     return Consumer<SearchKeyManager>(
         builder: (context, searchKeyManager, child) {
       return Container(
         height: 54,
         padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
         decoration: BoxDecoration(
-          color: Colors.transparent.withOpacity(0.2),
+          color: Colors.grey.withOpacity(0.5),
           borderRadius: BorderRadius.circular(16),
         ),
         child: Row(
@@ -219,17 +224,17 @@ class _SearchEditTextWidgetState extends State<SearchEditTextWidget> {
                 onSubmitted: (String value) async {
                   searchKeyManager.setSearchKey(value);
                 },
-                cursorColor: widget.primaryColor.withOpacity(0.5),
+                cursorColor: Colors.grey.withOpacity(0.5),
                 decoration: InputDecoration(
                   hintText: 'Search',
                   hintStyle: TextStyle(
-                    color: widget.primaryColor.withOpacity(0.5),
+                    color: Colors.grey.withOpacity(0.5),
                   ),
                   enabledBorder: InputBorder.none,
                   focusedBorder: InputBorder.none,
                   suffixIcon: Icon(
                     Icons.search,
-                    color: widget.primaryColor.withOpacity(0.5),
+                    color: Colors.grey,
                   ),
                 ),
               ),
@@ -296,25 +301,27 @@ class _SearchScreenListWidgetState extends State<SearchScreenListWidget> {
                                 children: [
                                   Icon(
                                     Icons.access_time,
-                                    color: Colors.grey,
+                                    color: Colors.grey.withOpacity(0.5),
                                   ),
                                   SizedBox(width: 4),
                                   Text(
                                     "4 hours ago",
                                     style: TextStyle(
-                                        color: Colors.grey, fontSize: 14),
+                                        color: Colors.grey.withOpacity(0.5),
+                                        fontSize: 14),
                                   )
                                 ],
                               ),
                               Row(
                                 children: [
                                   Icon(Icons.remove_red_eye,
-                                      color: Colors.grey),
+                                      color: Colors.grey.withOpacity(0.5)),
                                   SizedBox(width: 4),
                                   Text(
                                     "376 views",
                                     style: TextStyle(
-                                        color: Colors.grey, fontSize: 14),
+                                        color: Colors.grey.withOpacity(0.5),
+                                        fontSize: 14),
                                   )
                                 ],
                               )
