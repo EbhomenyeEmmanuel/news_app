@@ -35,4 +35,5 @@ A news app built with Flutter.
 
 ## TODO
 * Pagination.
+* Transition Animation.
 
