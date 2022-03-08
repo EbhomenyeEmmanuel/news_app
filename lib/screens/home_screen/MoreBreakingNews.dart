@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:news_app/components/news_icon.dart';
+import 'package:news_app/components/shimmer_breaking_news_list_widget.dart';
 import 'package:news_app/models/stories.dart';
 
 import '../../api/news_repository.dart';
@@ -47,8 +48,8 @@ class _MoreBreakingNewsState extends State<MoreBreakingNews> {
                             )
                           : EmptySearchScreen();
                     } else {
-                      return const Center(
-                        child: CircularProgressIndicator(),
+                      return Center(
+                        child: ShimmerMoreBreakingNewsListWidget(),
                       );
                     }
                   }),
@@ -82,10 +83,7 @@ class BreakingNewsTileWidget extends StatelessWidget {
         ),
         SizedBox(height: 16),
         Text('${_item.description}',
-            style: TextStyle(
-                color: Colors.black,
-                fontSize: 18,
-                fontWeight: FontWeight.bold))
+            style: Theme.of(context).textTheme.headline4)
       ],
     );
   }
