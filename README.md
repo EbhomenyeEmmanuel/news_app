@@ -6,17 +6,17 @@ A news app built with Flutter.
 
 ### Screenshots
 <p>
-    <img src="https://github.com/EbhomenyeEmmanuel/news_app/tree/master/screenshots/home_shimmer.png" width="200px" height="auto"/>
-    <img src="https://github.com/EbhomenyeEmmanuel/news_app/tree/master/screenshots/asset_home.png" width="200px" height="auto" hspace="10"/>
-    <img src="https://github.com/EbhomenyeEmmanuel/news_app/tree/master/screenshots/shimmer_breaking_news.png" width="200px" height="auto" hspace="10"/>
-    <img src="https://github.com/EbhomenyeEmmanuel/news_app/tree/master/screenshots/breaking_news.png" width="200px" height="auto" />
+    <img src="https://raw.githubusercontent.com/EbhomenyeEmmanuel/news_app/tree/master/screenshots/home_shimmer.png" width="200px" height="auto"/>
+    <img src="https://raw.githubusercontent.com/EbhomenyeEmmanuel/news_app/tree/master/screenshots/asset_home.png" width="200px" height="auto" hspace="10"/>
+    <img src="https://raw.githubusercontent.com/EbhomenyeEmmanuel/news_app/tree/master/screenshots/shimmer_breaking_news.png" width="200px" height="auto" hspace="10"/>
+    <img src="https://raw.githubusercontent.com/EbhomenyeEmmanuel/news_app/tree/master/screenshots/breaking_news.png" width="200px" height="auto" />
 </p>
 
 <p>
-    <img src="https://github.com/EbhomenyeEmmanuel/news_app/tree/master/screenshots/shimmer_search.png" width="200px" height="auto"/>
-    <img src="https://github.com/EbhomenyeEmmanuel/news_app/tree/master/screenshots/not_found.png" width="200px" height="auto" hspace="10"/>
-    <img src="https://github.com/EbhomenyeEmmanuel/news_app/tree/master/screenshots/light_theme_search.png" width="200px" height="auto" hspace="10"/>
-    <img src="https://github.com/EbhomenyeEmmanuel/news_app/tree/master/screenshots/dark_theme_search.png" width="200px" height="auto" />
+    <img src="https://raw.githubusercontent.com/EbhomenyeEmmanuel/news_app/tree/master/screenshots/shimmer_search.png" width="200px" height="auto"/>
+    <img src="https://raw.githubusercontent.com/EbhomenyeEmmanuel/news_app/tree/master/screenshots/not_found.png" width="200px" height="auto" hspace="10"/>
+    <img src="https://raw.githubusercontent.com/EbhomenyeEmmanuel/news_app/tree/master/screenshots/light_theme_search.png" width="200px" height="auto" hspace="10"/>
+    <img src="https://raw.githubusercontent.com/EbhomenyeEmmanuel/news_app/tree/master/screenshots/dark_theme_search.png" width="200px" height="auto" />
 </p>
 
 ## UI design
