@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:news_app/home.dart';
 import 'package:news_app/news_app_theme.dart';
-import 'package:news_app/provider/search_key_manager.dart';
 import 'package:news_app/provider/theme_provider.dart';
 import 'package:provider/provider.dart';
 

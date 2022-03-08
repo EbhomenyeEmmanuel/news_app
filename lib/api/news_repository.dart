@@ -9,7 +9,8 @@ import 'package:news_app/models/stories.dart';
 class NewsRepository {
   final url = "https://api.thenewsapi.com/v1/news";
 
-  final API_TOKEN ="4dcs7gizr2CAffN5XvqKZF94R5CcP0MfLGpet6mf";
+  static const API_TOKEN = String.fromEnvironment("TOKEN");
+
   //Pass token
   Future<AllNewsData> getAllNewsByCategoryData(String category) async {
     final todayNews = await _getAllNewsByCategory(category);
@@ -17,6 +18,7 @@ class NewsRepository {
   }
 
   Future<NewsData> getTopStoriesData() async {
+    print("Token is $API_TOKEN");
     final topStories = await _getTopStories();
     return NewsData(topStories);
   }
