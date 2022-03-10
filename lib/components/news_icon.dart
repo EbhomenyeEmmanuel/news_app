@@ -21,10 +21,12 @@ class NewsIcon extends StatelessWidget {
         height: imageHeight,
         width: imageWidth,
         fit: BoxFit.fill,
-        progressIndicatorBuilder: (context, url, downloadProgress) => Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: CircularProgressIndicator(value: downloadProgress.progress),
-        ),
+        progressIndicatorBuilder: (context, url, downloadProgress) =>
+           SizedBox(
+               width: 50,
+               height: 50,
+               child:
+                   CircularProgressIndicator(value: downloadProgress.progress)),
         errorWidget: (context, url, error) => Icon(Icons.error),
       ),
       borderRadius: BorderRadius.circular(12),
