@@ -33,20 +33,10 @@ class _MoreBreakingNewsState extends State<MoreBreakingNews> {
               child: FutureBuilder(
                   future: NewsRepository().getTopStoriesData(),
                   builder: (context, AsyncSnapshot<NewsData> snapshot) {
+                    //isLoading = true;
                     if (snapshot.connectionState == ConnectionState.done) {
-                      final items = snapshot.data?.todayStories ?? [];
-                      return items.isNotEmpty
-                          ? ListView.separated(
-                              itemBuilder: (context, index) {
-                                return BreakingNewsTileWidget(items[index]);
-                              },
-                              itemCount: items.length,
-                              separatorBuilder:
-                                  (BuildContext context, int index) {
-                                return SizedBox(height: 16);
-                              },
-                            )
-                          : EmptySearchScreen();
+                      return MoreBreakingNewsList(
+                          stories: snapshot.data?.todayStories ?? []);
                     } else {
                       return Center(
                         child: ShimmerMoreBreakingNewsListWidget(),
@@ -58,6 +48,79 @@ class _MoreBreakingNewsState extends State<MoreBreakingNews> {
         ),
       ),
     ));
+  }
+}
+
+class MoreBreakingNewsList extends StatefulWidget {
+  final List<Story> stories;
+
+  const MoreBreakingNewsList({Key? key, required this.stories})
+      : super(key: key);
+
+  @override
+  State<MoreBreakingNewsList> createState() => _MoreBreakingNewsList();
+}
+
+class _MoreBreakingNewsList extends State<MoreBreakingNewsList> {
+  bool isLoading = false;
+  int currentPageNumber = 1;
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.stories.isNotEmpty
+        ? Column(
+            children: [
+              Expanded(
+                child: ListView.separated(
+                  controller: _scrollController,
+                  itemBuilder: (context, index) {
+                    return BreakingNewsTileWidget(widget.stories[index]);
+                  },
+                  itemCount: widget.stories.length,
+                  separatorBuilder: (BuildContext context, int index) {
+                    return SizedBox(height: 16);
+                  },
+                ),
+              ),
+              if (isLoading) ...{
+                Container(
+                    width: 40,
+                    height: 40,
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    )),
+              }
+            ],
+          )
+        : EmptySearchScreen();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >=
+          _scrollController.position.maxScrollExtent) {
+        setState(() {
+          isLoading = true;
+        });
+        NewsRepository()
+            .getTopStoriesData(pageNumber: ++currentPageNumber)
+            .then((storyData) {
+          setState(() {
+            isLoading = false;
+            widget.stories.addAll(storyData.todayStories);
+          });
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _scrollController.dispose();
   }
 }
 

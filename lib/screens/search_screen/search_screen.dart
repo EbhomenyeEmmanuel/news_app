@@ -166,7 +166,8 @@ class TabViewWidget extends StatelessWidget {
               // getNewsByCategory(snapshot.data?.allNews ?? [], category);
               return (listOfNewsByCategory.isEmpty)
                   ? EmptySearchScreen(category: category)
-                  : SearchScreenListWidget(newsList: listOfNewsByCategory);
+                  : SearchScreenListWidget(
+                      category: category, newsList: listOfNewsByCategory);
             } else {
               return Center(
                 child: ShimmerSearchListWidget(),
@@ -248,9 +249,12 @@ class _SearchEditTextWidgetState extends State<SearchEditTextWidget> {
 
 class SearchScreenListWidget extends StatefulWidget {
   final List<News> _allNewsList;
+  final String _category;
 
-  const SearchScreenListWidget({Key? key, required List<News> newsList})
+  const SearchScreenListWidget(
+      {Key? key, required List<News> newsList, required String category})
       : _allNewsList = newsList,
+        _category = category,
         super(key: key);
 
   @override
@@ -259,86 +263,107 @@ class SearchScreenListWidget extends StatefulWidget {
 
 class _SearchScreenListWidgetState extends State<SearchScreenListWidget> {
   final ScrollController _scrollController = ScrollController();
+  bool isLoading = false;
+  int currentPageNumber = 1;
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-      controller: _scrollController,
-      scrollDirection: Axis.vertical,
-      itemBuilder: (context, index) {
-        final News newsItem = widget._allNewsList[index];
-        return InkWell(
-            onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return SearchItemScreen(news: newsItem);
-              }));
-            },
-            child: Padding(
-              padding: const EdgeInsets.only(right: 8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  NewsIcon(
-                      imageUrl: newsItem.imageUrl,
-                      imageHeight: 70,
-                      imageWidth: 100),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            newsItem.title,
-                            style: Theme.of(context).textTheme.bodyText1,
-                            textAlign: TextAlign.left,
+    return Column(
+      children: [
+        Expanded(
+          child: ListView.separated(
+            controller: _scrollController,
+            scrollDirection: Axis.vertical,
+            itemBuilder: (context, index) {
+              final News newsItem = widget._allNewsList[index];
+              return InkWell(
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
+                      return SearchItemScreen(news: newsItem);
+                    }));
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        NewsIcon(
+                            imageUrl: newsItem.imageUrl,
+                            imageHeight: 70,
+                            imageWidth: 100),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  newsItem.title,
+                                  style: Theme.of(context).textTheme.bodyText1,
+                                  textAlign: TextAlign.left,
+                                ),
+                                SizedBox(height: 8),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.access_time,
+                                          color: Colors.grey.withOpacity(0.5),
+                                        ),
+                                        SizedBox(width: 4),
+                                        Text(
+                                          "4 hours ago",
+                                          style: TextStyle(
+                                              color:
+                                                  Colors.grey.withOpacity(0.5),
+                                              fontSize: 14),
+                                        )
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Icon(Icons.remove_red_eye,
+                                            color:
+                                                Colors.grey.withOpacity(0.5)),
+                                        SizedBox(width: 4),
+                                        Text(
+                                          "376 views",
+                                          style: TextStyle(
+                                              color:
+                                                  Colors.grey.withOpacity(0.5),
+                                              fontSize: 14),
+                                        )
+                                      ],
+                                    )
+                                  ],
+                                )
+                              ],
+                            ),
                           ),
-                          SizedBox(height: 8),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.access_time,
-                                    color: Colors.grey.withOpacity(0.5),
-                                  ),
-                                  SizedBox(width: 4),
-                                  Text(
-                                    "4 hours ago",
-                                    style: TextStyle(
-                                        color: Colors.grey.withOpacity(0.5),
-                                        fontSize: 14),
-                                  )
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Icon(Icons.remove_red_eye,
-                                      color: Colors.grey.withOpacity(0.5)),
-                                  SizedBox(width: 4),
-                                  Text(
-                                    "376 views",
-                                    style: TextStyle(
-                                        color: Colors.grey.withOpacity(0.5),
-                                        fontSize: 14),
-                                  )
-                                ],
-                              )
-                            ],
-                          )
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
-            ));
-      },
-      itemCount: widget._allNewsList.length,
-      separatorBuilder: (BuildContext context, int index) {
-        return SizedBox(height: 8);
-      },
+                  ));
+            },
+            itemCount: widget._allNewsList.length,
+            separatorBuilder: (BuildContext context, int index) {
+              return SizedBox(height: 8);
+            },
+          ),
+        ),
+        if (isLoading) ...{
+          Container(
+              width: 40,
+              height: 40,
+              child: Center(
+                child: CircularProgressIndicator(),
+              )),
+        }
+      ],
     );
   }
 
@@ -347,7 +372,26 @@ class _SearchScreenListWidgetState extends State<SearchScreenListWidget> {
     super.initState();
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=
-          _scrollController.position.maxScrollExtent) {}
+          _scrollController.position.maxScrollExtent) {
+        setState(() {
+          isLoading = true;
+        });
+
+        final searchKeyManager =
+            Provider.of<SearchKeyManager>(context, listen: false);
+        (searchKeyManager.getSearchKey().isNotEmpty
+                ? NewsRepository().searchAllNewsByCategoryData(
+                    widget._category.toLowerCase(),
+                    searchKeyManager.getSearchKey())
+                : NewsRepository()
+                    .getAllNewsByCategoryData(widget._category.toLowerCase()))
+            .then((storyData) {
+          setState(() {
+            isLoading = false;
+            widget._allNewsList.addAll(storyData.allNews);
+          });
+        });
+      }
     });
   }
 

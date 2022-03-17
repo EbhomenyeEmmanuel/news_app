@@ -17,9 +17,9 @@ class NewsRepository {
     return AllNewsData(todayNews);
   }
 
-  Future<NewsData> getTopStoriesData() async {
+  Future<NewsData> getTopStoriesData({int pageNumber = 1}) async {
     print("Token is $API_TOKEN");
-    final topStories = await _getTopStories();
+    final topStories = await _getTopStories(pageNumber);
     return NewsData(topStories);
   }
 
@@ -93,9 +93,9 @@ class NewsRepository {
   }
 
 
-  Future<List<Story>> _getTopStories() async {
+  Future<List<Story>> _getTopStories(int pageNumber) async {
     try {
-      final parsedUrl = Uri.parse(url + "/top?api_token=$API_TOKEN&language=en");
+      final parsedUrl = Uri.parse(url + "/top?api_token=$API_TOKEN&language=en&page=${pageNumber.toString()}");
       final response = await http.get(parsedUrl);
       final statusCode = response.statusCode;
       final rawJsonString = response.body;
